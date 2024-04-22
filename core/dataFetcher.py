@@ -2,7 +2,7 @@ import aiohttp
 
 from core.localSettings import REPORT_API_URL, GET_USER_BY_ID_API_URL, CHECK_USER_BY_ID_API_URL, GET_WORK_LIST_API_URL
 from core.localSettings import UPDATE_USER_STATE_API_URL, UPDATE_PIVOT_TABLES_API_URL, GET_SELECTED_WORK_API_URL, \
-    GET_WORK_TYPE_LIST_API_URL, EDIT_WORK_TYPE_API_URL
+    GET_WORK_TYPE_LIST_API_URL, EDIT_WORK_TYPE_API_URL, GET_WORK_BY_ID_API_URL
 
 
 async def get_report():
@@ -56,6 +56,15 @@ async def get_selected_work(data, type_response):
 async def get_user_by_id(user_id):
     async with aiohttp.ClientSession() as session:
         async with session.post(GET_USER_BY_ID_API_URL, data=user_id) as response:
+            return await response.json()
+
+
+async def get_work_by_id(work_id, new_value, field):
+    print(work_id)
+    async with aiohttp.ClientSession() as session:
+        async with session.post(GET_WORK_BY_ID_API_URL, data={'work_id': int(work_id),
+                                                              'new_value': new_value,
+                                                              'field': field}) as response:
             return await response.json()
 
 

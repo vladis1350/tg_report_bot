@@ -10,3 +10,4 @@ UPDATE_PIVOT_TABLES_API_URL = HOST + 'edit/update_pivot_tables'
 GET_SELECTED_WORK_API_URL = HOST + 'get_selected_work/'
 GET_WORK_TYPE_LIST_API_URL = HOST + 'work_type_list/'
 EDIT_WORK_TYPE_API_URL = HOST + "edit_work_type/"
+GET_WORK_BY_ID_API_URL = HOST + "get_work_by_id/"

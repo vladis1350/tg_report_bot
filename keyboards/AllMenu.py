@@ -69,10 +69,11 @@ def get_editing_report_menu() -> ReplyKeyboardMarkup:
 
 
 def get_edit_work_menu(work) -> InlineKeyboardMarkup:
+    print(work)
     kb = InlineKeyboardBuilder()
-    kb.button(text="План: " + work['plan'], callback_data='plan' + str(work['id']))
-    kb.button(text="Факт: " + work['fact'], callback_data='fact' + str(work['id']))
-    kb.button(text="За день: " + work['per_day'], callback_data='per_day' + str(work['id']))
+    kb.button(text="План: " + work['plan'], callback_data='plan_' + str(work['id']))
+    kb.button(text="Факт: " + work['fact'], callback_data='fact_' + str(work['id']))
+    kb.button(text="За день: " + work['per_day'], callback_data='per_day_' + str(work['id']))
     kb.adjust(1)
     return kb.as_markup()
 

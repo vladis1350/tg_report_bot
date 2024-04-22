@@ -4,11 +4,13 @@ from aiogram.types import Message, CallbackQuery
 
 import utils.btn_names as btn
 from DBDataParser import parse_work_list
-from core.dataFetcher import get_works_type, update_user, edit_work_type, get_work_list, get_selected_work
+from core.dataFetcher import get_works_type, update_user, edit_work_type, get_work_list, get_selected_work, \
+    get_work_by_id
 from keyboards.AllMenu import get_works_type_btn_list, get_work_list_buttons_for_edit, get_edit_work_menu
 from utils.stateform import StepsForm
 
 router = Router()
+reserve_field = {}
 
 
 @router.message(F.text == btn.ADD_INFO_REP)
@@ -33,11 +35,35 @@ async def add_info(message: Message, state: FSMContext):
 async def select_work_for_edit(callback: CallbackQuery, state: FSMContext):
     work = await get_selected_work(callback.data, "summ")
     try:
-        await callback.message.edit_text(callback.data.upper() + f"\n(лист {work['list_name']})")
+        message_text = callback.data.upper() + f"\n(лист - '{work['list_name']}')"
+        await callback.message.edit_text(message_text)
         await callback.message.edit_reply_markup(reply_markup=get_edit_work_menu(work))
-        # await state.set_state(StepsForm.PIVOT_DATA_MENU)
+        await state.set_state(StepsForm.EDIT_SELECTED_WORK)
+        await update_user(callback.message.from_user.id, StepsForm.EDIT_SELECTED_WORK, callback.message.message_id)
     except Exception as mess:
         await callback.message.answer("Ошибка получения данных\n" + str(mess))
+
+
+@router.callback_query(StepsForm.EDIT_SELECTED_WORK)
+async def edit_selected_work(callback: CallbackQuery, state: FSMContext):
+    reserve_field['field'] = callback.data.lower()
+    await callback.message.answer(f"Введите новую ячейку\n")
+    await state.set_state(StepsForm.INPUT_NEW_VALUE_FOR_EDIT)
+
+
+@router.message(StepsForm.INPUT_NEW_VALUE_FOR_EDIT)
+async def input_new_value_for_edit(message: Message, state: FSMContext):
+    message_text = message.text
+    print(reserve_field)
+    work = ''
+    if 'plan_' in reserve_field['field']:
+        work = await get_work_by_id(reserve_field['field'][5:], message_text, "plan")
+    elif 'fact_' in reserve_field['field']:
+        work = await get_work_by_id(reserve_field['field'][5:], message_text, "fact")
+    elif 'per_day_' in reserve_field['field']:
+        work = await get_work_by_id(reserve_field['field'][8:], message_text, "per_day")
+
+    await message.answer("Изменения сохранены!", reply_markup=get_edit_work_menu(work))
 
 
 @router.message(F.text == btn.DELETE_INFO_REP)

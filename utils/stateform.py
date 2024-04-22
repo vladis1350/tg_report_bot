@@ -2,6 +2,8 @@ from aiogram.fsm.state import StatesGroup, State
 
 
 class StepsForm(StatesGroup):
+    INPUT_NEW_VALUE_FOR_EDIT = State()
+    EDIT_SELECTED_WORK = State()
     SELECT_WORK_FOR_EDIT = State()
     SELECT_WORK_TYPE_FOR_REPORT = State()
     SETTINGS_REPORT = State()
