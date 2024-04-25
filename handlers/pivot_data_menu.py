@@ -6,8 +6,8 @@ from bs4 import BeautifulSoup
 import utils.btn_names as btn
 from DBDataParser import parse_work_list, parse_work_to_string
 from core.dataFetcher import get_work_list, update_user, update_pivot_tables, get_selected_work, get_user_by_id
-from keyboards.AllMenu import get_pivot_data_menu, get_work_list_buttons, get_main_menu, get_dop_menu, \
-    get_setting_report_menu
+from keyboards.AllMenu import get_pivot_data_menu, get_work_list_buttons, get_main_menu, get_setting_report_menu, \
+    get_farms_buttons_list
 from utils.stateform import StepsForm
 
 router = Router()
@@ -84,8 +84,25 @@ async def cancel(message: Message, state: FSMContext):
         await update_user(message.from_user.id, StepsForm.SETTINGS_REPORT, message.message_id)
 
 
-@router.message(F.text == "DOP")
-async def dop_menu(message: Message, state: FSMContext):
-    await message.answer("DOP MENU", reply_markup=get_dop_menu())
-    await state.set_state(StepsForm.DOP_MENU)
-    await update_user(message.from_user.id, StepsForm.DOP_MENU, message.message_id)
+@router.message(F.text == btn.INSERT_PIVOT_DATA)
+async def insert_pivot_data(message: Message, state: FSMContext):
+    await message.answer("Выберите хозяйство", reply_markup=get_farms_buttons_list())
+    await state.set_state(StepsForm.SELECT_FARM)
+    await update_user(message.from_user.id, StepsForm.SELECT_FARM, message.message_id)
+
+
+@router.callback_query(StepsForm.SELECT_FARM)
+async def select_farm(callback: types.CallbackQuery, state: FSMContext):
+    await callback.message.delete()
+    await callback.message.answer(callback.data + "\nВведите информацию: ")
+    await state.set_state(StepsForm.ENTER_DATA_PER_DAY)
+    await update_user(callback.message.from_user.id, StepsForm.ENTER_DATA_PER_DAY, callback.message.message_id)
+
+
+@router.message(StepsForm.ENTER_DATA_PER_DAY)
+async def enter_data(message: types.Message, state: FSMContext):
+    values = message.text.split("\n")
+    for i in values:
+        await message.answer(i)
+    await state.set_state(StepsForm.PIVOT_DATA_MENU)
+    await update_user(message.from_user.id, StepsForm.PIVOT_DATA_MENU, message.message_id)

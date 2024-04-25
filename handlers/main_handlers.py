@@ -10,7 +10,6 @@ from keyboards.AllMenu import get_main_menu, get_setting_report_menu
 from utils.stateform import StepsForm
 
 router = Router()
-new_work = {}
 
 
 @router.message(Command("start"))
@@ -64,53 +63,8 @@ async def setting_report(message: Message, state: FSMContext):
     await update_user(message.from_user.id, StepsForm.SETTINGS_REPORT, message.message_id)
 
 
-@router.message(StepsForm.INPUT_LIST)
-async def input_list(message: Message, state: FSMContext):
-    new_work['list_name'] = message.text
-    await message.answer("Введите наименование работы: ")
-    await state.set_state(StepsForm.WORK_NAME)
-
-
-# @router.message(StepsForm.WORK_NAME)
-# async def input_work_name(message: Message, state: FSMContext):
-#     await message.answer("Введите номер ячейки со значение ФАКТ: ")
-#     work.set_work_name(message.text)
-#     await state.set_state(StepsForm.INPUT_RANGE_ONE)
-#
-#
-# @router.message(StepsForm.INPUT_RANGE_ONE)
-# async def input_range_one(message: Message, state: FSMContext):
-#     work.set_range_one(message.text)
-#     await message.answer("Введите номер ячейки со значение ЗА ДЕНЬ: ")
-#     await state.set_state(StepsForm.INPUT_RANGE_TWO)
-#
-#
-# @router.message(StepsForm.INPUT_RANGE_TWO)
-# async def input_range_two(message: Message, state: FSMContext):
-#     work.set_range_two(message.text)
-#     await message.answer("Выберите единицу измерения: ", reply_markup=get_unit_menu())
-#     await state.set_state(StepsForm.SELECT_UNIT)
-#
-#
-# @router.callback_query(StepsForm.SELECT_UNIT)
-# async def select_unit(callback: types.CallbackQuery, state: FSMContext):
-#     work.set_unit_w(callback.data)
-#     await callback.message.answer(f"Вы добавили работу: \n"
-#                                   f"Наименование работы: {work.work_name}\n"
-#                                   f"Наименование листа: {work.list_name}\n"
-#                                   f"Ячейка ФАКТ: {work.range_one}\n"
-#                                   f"Ячейка ЗА ДЕНЬ: {work.range_two}\n"
-#                                   f"Единица измерения: {work.unit_w}")
-#     mdb.createWork(work)
-#     await state.set_state(StepsForm.FINISH_ADDING_WORK)
-
-
-@router.message(StepsForm.FINISH_ADDING_WORK)
-async def finish_adding_work(message: Message, state: FSMContext):
-    await message.answer(f"Работа успешно добавлена!", reply_markup=get_main_menu())
-    # await state.set_state(StepsForm.MAIN_MENU)
-
-
-@router.message(F.text == 'Редактировать ячейки данных')
-async def edit_cell(message: Message):
-    await message.answer(": ")
+# @router.message(F.text == btn.TEST)
+# async def setting_report(message: Message, state: FSMContext):
+#     test = await test_table()
+#     print(test)
+#     await message.answer("Good")
