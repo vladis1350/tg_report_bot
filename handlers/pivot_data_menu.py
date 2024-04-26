@@ -36,14 +36,12 @@ async def pivot_data_menu(message: Message, state: FSMContext):
 
 @router.message(F.text == btn.PREPARATION_TABLES)
 async def reparation_tables(message: Message, state: FSMContext):
-    result = await update_pivot_tables()
-    soup = BeautifulSoup(result, 'html.parser')
-    s = ""
-    res_list = soup.find_all('p')
-    for _ in res_list:
-        s += _.text + "\n"
     try:
-        await message.answer(s, reply_markup=None)
+        result = await update_pivot_tables()
+        soup = BeautifulSoup(result, 'html.parser')
+        res_list = soup.find_all('p')
+        for _ in res_list:
+            await message.answer(_.text)
     except Exception as e:
         await message.answer("Ошибка получения данных от сервера!\n" + str(e), reply_markup=None)
     await state.set_state(StepsForm.PREPARATION_TABLES)

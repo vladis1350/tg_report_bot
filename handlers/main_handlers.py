@@ -51,6 +51,7 @@ async def get_report(message: Message):
         report = await get_rep()
         soup = BeautifulSoup(report, 'html.parser')
         rep = soup.textarea.string
+        await message.answer("Пожалуйста подождите, идет формирование отчёта...", reply_markup=get_main_menu())
         await message.answer(rep, reply_markup=get_main_menu())
     except Exception as e:
         await message.answer("Ошибка получения данных\n\n " + str(e), reply_markup=get_main_menu())
@@ -64,7 +65,7 @@ async def setting_report(message: Message, state: FSMContext):
 
 
 # @router.message(F.text == btn.TEST)
-# async def setting_report(message: Message, state: FSMContext):
-#     test = await test_table()
-#     print(test)
-#     await message.answer("Good")
+# async def setting_report(message: Message):
+#     test = await test_table(message.from_user.first_name, message.from_user.last_name, message.from_user.username)
+#     print(test.values())
+#     await message.answer("sss")

@@ -142,8 +142,13 @@ async def select_work_for_edit(callback: CallbackQuery, state: FSMContext):
 
 @router.callback_query(StepsForm.EDIT_SELECTED_WORK)
 async def edit_selected_work(callback: CallbackQuery, state: FSMContext):
+    print(callback.data)
     reserve_field['field'] = callback.data.lower()
-    await callback.message.answer(f"Введите новую ячейку\n")
+    if "list_name_" in callback.data:
+        await callback.message.answer(f"Введите название листа\n")
+    else:
+        await callback.message.answer(f"Введите новую ячейку\n")
+
     await state.set_state(StepsForm.INPUT_NEW_VALUE_FOR_EDIT)
 
 
@@ -151,14 +156,20 @@ async def edit_selected_work(callback: CallbackQuery, state: FSMContext):
 async def input_new_value_for_edit(message: Message, state: FSMContext):
     message_text = message.text
     work = ''
-    if 'plan_' in reserve_field['field']:
-        work = await get_work_by_id(reserve_field['field'][5:], message_text, "plan")
-    elif 'fact_' in reserve_field['field']:
-        work = await get_work_by_id(reserve_field['field'][5:], message_text, "fact")
-    elif 'per_day_' in reserve_field['field']:
-        work = await get_work_by_id(reserve_field['field'][8:], message_text, "per_day")
-
-    await message.answer("Изменения сохранены!", reply_markup=get_edit_work_menu(work))
+    try:
+        if 'plan_' in reserve_field['field']:
+            work = await get_work_by_id(reserve_field['field'][5:], message_text, "plan")
+        elif 'fact_' in reserve_field['field']:
+            work = await get_work_by_id(reserve_field['field'][5:], message_text, "fact")
+        elif 'per_day_' in reserve_field['field']:
+            work = await get_work_by_id(reserve_field['field'][8:], message_text, "per_day")
+        elif 'list_name_' in reserve_field['field']:
+            work = await get_work_by_id(reserve_field['field'][10:], message_text, "list_name")
+        await message.answer("Изменения сохранены!", reply_markup=get_edit_work_menu(work))
+        await state.set_state(StepsForm.EDIT_SELECTED_WORK)
+    except Exception:
+        await message.answer("Что-то пошло не так!", reply_markup=get_edit_work_menu(work))
+        await state.set_state(StepsForm.SETTINGS_REPORT)
 
 
 @router.message(F.text == btn.DELETE_INFO_REP)

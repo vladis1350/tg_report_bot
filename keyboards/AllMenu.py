@@ -9,7 +9,7 @@ def get_main_menu() -> ReplyKeyboardMarkup:
     kb.button(text=btn.GET_REPORT)
     kb.button(text=btn.SETTING_REPORT)
     kb.button(text=btn.PIVOT_DATA)
-    # kb.button(text=btn.TEST)
+    kb.button(text=btn.TEST)
     kb.adjust(2)
     return kb.as_markup(resize_keyboard=True)
 
@@ -73,6 +73,7 @@ def get_editing_report_menu() -> ReplyKeyboardMarkup:
 
 def get_edit_work_menu(work) -> InlineKeyboardMarkup:
     kb = InlineKeyboardBuilder()
+    kb.button(text="Лист: " + work['list_name'], callback_data='list_name_' + str(work['id']))
     kb.button(text="План: " + work['plan'], callback_data='plan_' + str(work['id']))
     kb.button(text="Факт: " + work['fact'], callback_data='fact_' + str(work['id']))
     kb.button(text="За день: " + work['per_day'], callback_data='per_day_' + str(work['id']))
